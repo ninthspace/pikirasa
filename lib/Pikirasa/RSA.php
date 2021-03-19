@@ -88,8 +88,10 @@ class RSA
             throw new Exception("OpenSSL: Error writing PRIVATE key.");
         }
 
-        openssl_pkey_free($resource);
-
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_pkey_free($resource);
+        }
+        
         return true;
     }
 
@@ -141,7 +143,11 @@ class RSA
         }
 
         $success = openssl_public_encrypt($data, $encryptedData, $publicKey);
-        openssl_free_key($publicKey);
+        
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_free_key($publicKey);
+        }
+        
         if (!$success) {
             throw new Exception("Encryption failed. Ensure you are using a PUBLIC key.");
         }
@@ -180,7 +186,11 @@ class RSA
         }
 
         $success = openssl_private_decrypt($data, $decryptedData, $privateKey);
-        openssl_free_key($privateKey);
+        
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_free_key($privateKey);
+        }
+        
         if (!$success) {
             throw new Exception("Decryption failed. Ensure you are using (1) a PRIVATE key, and (2) the correct one.");
         }
